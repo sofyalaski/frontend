@@ -345,4 +345,10 @@ export class DatasetDetailComponent
     );
     this.store.dispatch(showMessageAction({ message }));
   }
+
+  onOneDepClick() {
+    const id = encodeURIComponent(this.dataset.pid);
+    this.router.navigateByUrl("/datasets/" + id + "/onedep");
+  }
+
 }
