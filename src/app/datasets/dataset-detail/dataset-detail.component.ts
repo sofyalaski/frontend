@@ -35,6 +35,7 @@ import {
   clearFacetsAction,
   updatePropertyAction,
   selectDatasetAction,
+  selectDatasetAction,
 } from "state-management/actions/datasets.actions";
 import { Router } from "@angular/router";
 import { selectCurrentProposal } from "state-management/selectors/proposals.selectors";
@@ -98,6 +99,8 @@ export class DatasetDetailComponent
   editingAllowed = false;
   editEnabled = false;
   show = false;
+
+  @Output() emClick = new EventEmitter<Dataset>();
 
   readonly separatorKeyCodes: number[] = [ENTER, COMMA, SPACE];
 
