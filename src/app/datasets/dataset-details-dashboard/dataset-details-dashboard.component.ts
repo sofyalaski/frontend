@@ -290,7 +290,7 @@ export class DatasetDetailsDashboardComponent
   }
 
   ngOnDestroy() {
-    this.store.dispatch(clearCurrentDatasetStateAction());
+    //this.store.dispatch(clearCurrentDatasetStateAction());
     this.store.dispatch(clearCurrentProposalStateAction());
     this.store.dispatch(clearCurrentSampleStateAction());
     this.subscriptions.forEach((subscription) => {

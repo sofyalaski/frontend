@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, OnDestroy, Inject } from "@angular/core";
 import { Dataset, Proposal, Sample } from "shared/sdk/models";
 import { ENTER, COMMA, SPACE } from "@angular/cdk/keycodes";
 import { MatChipInputEvent } from "@angular/material/chips";
@@ -26,6 +26,7 @@ import {
   addKeywordFilterAction,
   clearFacetsAction,
   updatePropertyAction,
+  selectDatasetAction,
 } from "state-management/actions/datasets.actions";
 import { Router } from "@angular/router";
 import { selectCurrentProposal } from "state-management/selectors/proposals.selectors";
@@ -44,6 +45,7 @@ import {
 } from "@angular/forms";
 import { Message, MessageType } from "state-management/models";
 import { DOCUMENT } from "@angular/common";
+
 
 /**
  * Component to show details for a data set, using the
@@ -83,6 +85,9 @@ export class DatasetDetailComponent
   editingAllowed = false;
   editEnabled = false;
   show = false;
+
+  @Output() emClick = new EventEmitter<Dataset>();
+
   readonly separatorKeyCodes: number[] = [ENTER, COMMA, SPACE];
 
   constructor(
@@ -347,8 +352,11 @@ export class DatasetDetailComponent
   }
 
   onOneDepClick() {
+    console.log('started one dep click');
     const id = encodeURIComponent(this.dataset.pid);
     this.router.navigateByUrl("/datasets/" + id + "/onedep");
+    console.log("my datset in the details:", this.dataset);
+    // this.store.dispatch(selectDatasetAction({ dataset: this.dataset  }));
   }
 
 }
