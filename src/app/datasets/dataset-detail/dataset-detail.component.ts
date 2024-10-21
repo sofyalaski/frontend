@@ -352,11 +352,8 @@ export class DatasetDetailComponent
   }
 
   onOneDepClick() {
-    console.log('started one dep click');
     const id = encodeURIComponent(this.dataset.pid);
     this.router.navigateByUrl("/datasets/" + id + "/onedep");
-    console.log("my datset in the details:", this.dataset);
-    // this.store.dispatch(selectDatasetAction({ dataset: this.dataset  }));
   }
 
 }
