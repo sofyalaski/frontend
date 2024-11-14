@@ -155,7 +155,7 @@
                 dataset.size >= 4000000000
                   ? 35 + (5 * dataset.size) / 40000000000
                   : 5 + (15 * dataset.size) / 4000000000,
-              background: dataset.size >= 4000000000 ? 'red' : 'green'
+              background: dataset.size >= 4000000000 ? 'red' : 'green',
             }"
           >
             &nbsp;
@@ -206,13 +206,11 @@
         </div>
       </mat-header-cell>
       <mat-cell *matCellDef="let dataset">
-        <ng-container *ngIf="datasetsPerPage$ | async as datasetsPerPage">
-          <img
-            *ngIf="datasetsPerPage < 50"
-            src="{{ dataset.pid | thumbnail | async }}"
-            height="60px"
-          />
-        </ng-container>
+        <img
+          src="{{ dataset.pid | thumbnail | async }}"
+          height="60px"
+          loading="lazy"
+        />
       </mat-cell>
     </ng-container>
 
@@ -292,7 +290,7 @@
         [matTooltip]="
           [
             (dataset.datasetlifecycle || {}).archiveStatusMessage,
-            (dataset.datasetlifecycle || {}).retrieveStatus
+            (dataset.datasetlifecycle || {}).retrieveStatus,
           ].join('\n')
         "
       >

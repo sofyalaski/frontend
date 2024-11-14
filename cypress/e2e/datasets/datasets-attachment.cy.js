@@ -1,9 +1,8 @@
-/// <reference types="Cypress" />
 var path = require("path");
 
 describe("Dataset attachments", () => {
   beforeEach(() => {
-    cy.login(Cypress.config("username"), Cypress.config("password"));
+    cy.login(Cypress.env("username"), Cypress.env("password"));
 
     cy.intercept("POST", "/api/v3/Datasets/**/*").as("upload");
   });
@@ -49,6 +48,40 @@ describe("Dataset attachments", () => {
         "have.value",
         "scicat-logo.png",
       );
+    });
+
+    it("should open a new tab when clicking the attachment thumbnail", () => {
+      cy.visit("/datasets");
+
+      cy.get(".dataset-table mat-table mat-header-row").should("exist");
+
+      cy.finishedLoading();
+
+      cy.get('[data-cy="text-search"] input[type="search"]')
+        .clear()
+        .type("Cypress");
+
+      cy.isLoading();
+
+      cy.get("mat-row").contains("Cypress Dataset").first().click();
+
+      cy.isLoading();
+
+      cy.get(".mat-mdc-tab-link").contains("Attachments").click();
+
+      cy.window().then((win) => {
+        cy.stub(win, "open").as("open");
+      });
+
+      cy.get('[data-cy="attachment-thumbnail"]').click();
+
+      cy.get("@open").should("be.calledWith", Cypress.sinon.match(/blob:.*/));
+
+      cy.get(".mat-mdc-tab-link").contains("Details").click();
+
+      cy.get('[data-cy="attachment-thumbnail"]').click();
+
+      cy.get("@open").should("be.calledWith", Cypress.sinon.match(/blob:.*/));
     });
 
     it("should be able to download dataset attachment", () => {
