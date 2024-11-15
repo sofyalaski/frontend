@@ -71,6 +71,7 @@ export class ProposalDetailComponent implements OnInit {
   }
 
   onClickProposal(proposalId: string): void {
+    this.store.dispatch(clearProposalsStateAction());
     const id = encodeURIComponent(proposalId);
     this.router.navigateByUrl("/proposals/" + id);
   }
