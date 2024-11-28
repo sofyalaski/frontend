@@ -37,11 +37,13 @@ export class OneDepComponent implements OnInit {
   form: FormGroup;
   showAssociatedMapQuestion: boolean = false;
   methodsList = MethodsList;
-  // experiments = Experiments;
-  experiment: OneDepExperiment
+  experiment: OneDepExperiment 
+
   selectedFile: { [key: string]: File | null } = {};
+  formSubmitted = false;
   emFile = EmFile;
-  files = EmFiles;
+  files = EmFiles; // list of all possible files in EM deposition 
+  obligatoryFiles = {}; 
   detailsOverflow: string = 'hidden';
 
 
@@ -176,6 +178,39 @@ export class OneDepComponent implements OnInit {
     if (this.files[controlName]) {
       this.files[controlName].details = value;
     }
+  }
+  onMethodChange(): void {
+    this.files[this.emFile.Image].required = true;
+    this.files[this.emFile.MainMap].required = true;
+    switch (this.form.value['emMethod']){
+      case 'helical':
+      this.files[this.emFile.HalfMap1].required = true;
+      this.files[this.emFile.HalfMap2].required = true;
+        break;
+      case "single-particle":
+        this.files[this.emFile.HalfMap1].required = true;
+        this.files[this.emFile.HalfMap2].required = true;
+        this.files[this.emFile.MaskMap].required = true;
+        break;
+    }
+  }
+  onPDB(event: any): void {
+    const input = event.value;  
+    if (input === 'true') {
+      this.files[this.emFile.Coordinates].required = true;
+    } 
+  }
+ 
+  isFormValid(): boolean {
+    // Ensure all required files in EmFiles have been selected
+    return Object.keys(EmFiles).every((fileKey) => {
+        const file = EmFiles[fileKey as EmFile];
+        return !file.required || !!this.files[file.type]?.file;  // If required, ensure it's selected
+    });
+}
+  isRequired(key: string): boolean {
+    const fileType = this.fileTypes.find(ft => ft.key === key);
+    return this.files[fileType.key].required;
   }
   onDepositClick() {
     const formDataToSend = new FormData();

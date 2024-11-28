@@ -24,6 +24,7 @@ export const EmFiles: { [f in EmFile]: OneDepFile } = {
         file: null,
         contour: 0.0,
         details: "",
+        required: false,
     },
     [EmFile.HalfMap1]: {
         name: "",
@@ -31,6 +32,7 @@ export const EmFiles: { [f in EmFile]: OneDepFile } = {
         file: null,
         contour: 0.0,
         details: "",
+        required: false,
     },
     [EmFile.HalfMap2]: {
         name: "",
@@ -38,6 +40,7 @@ export const EmFiles: { [f in EmFile]: OneDepFile } = {
         file: null,
         contour: 0.0,
         details: "",
+        required: false,
     },
     [EmFile.MaskMap]: {
         name: "",
@@ -45,6 +48,7 @@ export const EmFiles: { [f in EmFile]: OneDepFile } = {
         file: null,
         contour: 0.0,
         details: "",
+        required: false,
     },
     [EmFile.AddMap]: {
         name: "",
@@ -52,24 +56,28 @@ export const EmFiles: { [f in EmFile]: OneDepFile } = {
         file: null,
         contour: 0.0,
         details: "",
+        required: false,
     },
     [EmFile.Coordinates]: {
         name: "",
         type: "co-cif",
         file: null,
         details: "",
+        required: false,
     },
     [EmFile.Image]: {
         name: "",
         type: "img-emdb",
         file: null,
         details: "",
+        required: false,
     },
     [EmFile.FSC]: {
         name: "",
         type: "fsc-xml",
         file: null,
         details: "",
+        required: false,
     },
 };
 
@@ -106,5 +114,6 @@ export interface OneDepFile {
     file: File,
     contour?: number,
     details?: string,
+    required: boolean,
 }
 
