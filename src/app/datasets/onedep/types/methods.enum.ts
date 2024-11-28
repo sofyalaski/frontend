@@ -15,6 +15,9 @@ export enum EmFile {
     Coordinates = 'co-cif',
     Image = 'img-emdb',
     FSC = 'fsc-xml',
+    LayerLines = "layer-lines",
+    StructureFactors = "xs-cif",
+    MTZ="xs-mtz",
 };
 
 export const EmFiles: { [f in EmFile]: OneDepFile } = {
@@ -79,35 +82,111 @@ export const EmFiles: { [f in EmFile]: OneDepFile } = {
         details: "",
         required: false,
     },
+    [EmFile.StructureFactors]: {
+        name: "",
+        type: "xs-cif", // need contour etc????
+        file: null,
+        details: "",
+        required: false,
+    },
+    [EmFile.MTZ]: {
+        name: "",
+        type: "xs-mtz",
+        file: null,
+        details: "",
+        required: false,
+    },
+    [EmFile.LayerLines]: {
+        name: "",
+        type: "layer-lines",
+        file: null,
+        details: "",
+        required: false,
+    },
 };
-
-interface EmMethod {
-    value: EmType;
-    viewValue: string;
-}
-
-
-export const MethodsList: EmMethod[] = [
-    { value: EmType.Helical, viewValue: 'Helical' },
-    { value: EmType.SingleParticle, viewValue: 'Single Particle' },
-    { value: EmType.SubtomogramAveraging, viewValue: 'Subtomogram Averaging' },
-    { value: EmType.Tomogram, viewValue: 'Tomogram' },
-    { value: EmType.ElectronCristallography, viewValue: 'Electron Crystallography' },
-];
-
 
 export interface OneDepExperiment {
     type: string;
     subtype?: string;
 }
 
-export const Experiments: { [e in EmType]: OneDepExperiment } = {
-    [EmType.Helical]: { type: "em", subtype: "helical" },
-    [EmType.SingleParticle]: { type: "em", subtype: "single" },
-    [EmType.SubtomogramAveraging]: { type: "em", subtype: "subtomogram" },
-    [EmType.Tomogram]: { type: "em", subtype: "tomography" },
-    [EmType.ElectronCristallography]: { type: "ec" }
-};
+
+
+interface EmMethod {
+    value: EmType;
+    viewValue: string;
+    experiment: OneDepExperiment;
+    files: DepositionFiles[];
+}
+export interface DepositionFiles {
+    name: string;
+    file: EmFile;
+}
+const BasicDepositionSet : DepositionFiles[] = [
+    // add metadata later
+    { name: 'Main Map', file: EmFile.MainMap },
+    { name: 'Mask Map', file: EmFile.MaskMap },
+    { name: 'Additional Map', file: EmFile.AddMap },
+    { name: 'Public Image', file: EmFile.Image },
+    { name: 'FSC-XML', file: EmFile.FSC },
+  ];
+
+const ExtendedDepositionSet: DepositionFiles[] = [
+    { name: 'Half Map (1)', file: EmFile.HalfMap1 }, // not in tomography
+    { name: 'Half Map (2)', file: EmFile.HalfMap2 },  // not in tomography
+]
+
+let HelicalDepositionSet:  DepositionFiles[] = BasicDepositionSet
+export const MethodsList: EmMethod[] = [
+    //FIXME need to add other data type of input
+    { 
+        value: EmType.Helical, 
+        viewValue: 'Helical', 
+        experiment: { type: "em", subtype: "helical" },
+        files:{ ...BasicDepositionSet, ...ExtendedDepositionSet, ...{ name: 'Coordinates', file: EmFile.Coordinates }},
+    },
+    {   value: EmType.SingleParticle, 
+        viewValue: 'Single Particle',
+        experiment: { type: "em", subtype: "single" },
+        files:{ ...BasicDepositionSet, ...ExtendedDepositionSet, ...{ name: 'Coordinates', file: EmFile.Coordinates }},
+    },
+    { 
+        value: EmType.SubtomogramAveraging, 
+        viewValue: 'Subtomogram Averaging',
+        experiment: { type: "em", subtype: "subtomogram" },
+        files:{ ...BasicDepositionSet, ...ExtendedDepositionSet, ...{ name: 'Coordinates', file: EmFile.Coordinates }},
+    },
+    { 
+        value: EmType.Tomogram, 
+        viewValue: 'Tomogram',
+        experiment: { type: "em", subtype: "tomography" },
+        files:BasicDepositionSet,
+    },
+    { 
+        value: EmType.ElectronCristallography, 
+        viewValue: 'Electron Crystallography',
+        experiment: { type: "ec" },
+        files:{ 
+            ...BasicDepositionSet,
+            ...ExtendedDepositionSet, 
+            ...{ name: 'Coordinates', file: EmFile.Coordinates },
+            ...{ name: 'Structure Factors', file: EmFile.StructureFactors },
+
+            ...{ name: 'MTZ', file: EmFile.MTZ },
+        },
+    },
+];
+
+
+
+
+// export const Experiments: { [e in EmType]: OneDepExperiment } = {
+//     [EmType.Helical]: { type: "em", subtype: "helical" },
+//     [EmType.SingleParticle]: { type: "em", subtype: "single" },
+//     [EmType.SubtomogramAveraging]: { type: "em", subtype: "subtomogram" },
+//     [EmType.Tomogram]: { type: "em", subtype: "tomography" },
+//     [EmType.ElectronCristallography]: { type: "ec" }
+// };
 export interface OneDepFile {
     name: string,
     type: string,
@@ -116,4 +195,3 @@ export interface OneDepFile {
     details?: string,
     required: boolean,
 }
-
