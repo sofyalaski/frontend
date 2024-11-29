@@ -18,7 +18,7 @@ import {
   selectCurrentUser
 } from "state-management/selectors/user.selectors";
 import { User } from "shared/sdk";
-import { MethodsList, OneDepExperiment, Experiments, EmFile, EmFiles } from "./types/methods.enum"
+import { MethodsList, DepositionFiles, EmFile } from "./types/methods.enum"
 import { Subscription, fromEvent } from "rxjs";
 
 
@@ -37,28 +37,15 @@ export class OneDepComponent implements OnInit {
   form: FormGroup;
   showAssociatedMapQuestion: boolean = false;
   methodsList = MethodsList;
-  experiment: OneDepExperiment 
 
   selectedFile: { [key: string]: File | null } = {};
   formSubmitted = false;
   emFile = EmFile;
-  files = EmFiles; // list of all possible files in EM deposition 
   obligatoryFiles = {}; 
   detailsOverflow: string = 'hidden';
-
+  fileTypes: { [f in EmFile]?: DepositionFiles };
 
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement> | undefined;
-
-  fileTypes = [
-    { header: 'Main Map', key: this.emFile.MainMap },
-    { header: 'Half Map (1)', key: this.emFile.HalfMap1 },
-    { header: 'Half Map (2)', key: this.emFile.HalfMap2 },
-    { header: 'Mask Map', key: this.emFile.MaskMap },
-    { header: 'Additional Map', key: this.emFile.AddMap },
-    { header: 'Coordinates', key: this.emFile.Coordinates },
-    { header: 'Public Image', key: this.emFile.Image },
-    { header: 'FSC-XML', key: this.emFile.FSC },
-  ];
 
   constructor(public appConfigService: AppConfigService,
     private store: Store,
@@ -122,6 +109,29 @@ export class OneDepComponent implements OnInit {
     this.orcidArray.removeAt(index);
   }
 
+  onMethodChange(): void {
+    this.fileTypes = this.methodsList[this.form.value['emMethod']].files;
+    this.fileTypes[this.emFile.Image].required = true;
+    this.fileTypes[this.emFile.MainMap].required = true;
+    switch (this.form.value['emMethod']){
+      case 'helical':
+      this.fileTypes[this.emFile.HalfMap1].required = true;
+      this.fileTypes[this.emFile.HalfMap2].required = true;
+        break;
+      case "single-particle":
+        this.fileTypes[this.emFile.HalfMap1].required = true;
+        this.fileTypes[this.emFile.HalfMap2].required = true;
+        this.fileTypes[this.emFile.MaskMap].required = true;
+        break;
+    }
+  }
+  onPDB(event: any): void {
+    const input = event.value;  
+    if (input === 'true') {
+      this.fileTypes[this.emFile.Coordinates].required = true;
+    } 
+  }
+
   autoGrow(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
     const lineHeight = parseInt(getComputedStyle(textarea).lineHeight, 10);
@@ -144,8 +154,8 @@ export class OneDepComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile[controlName] = input.files[0];
-      this.files[controlName].file = this.selectedFile[controlName];
-      this.files[controlName].name = this.selectedFile[controlName].name;
+      this.fileTypes[controlName].file = this.selectedFile[controlName];
+      this.fileTypes[controlName].fileName = this.selectedFile[controlName].name;
     }
   }
   updateContourLevelMain(event: Event) {
@@ -154,8 +164,8 @@ export class OneDepComponent implements OnInit {
     const parsedValue = parseFloat(normalizedInput);
     if (!isNaN(parsedValue)) {
       [EmFile.MainMap, EmFile.HalfMap1, EmFile.HalfMap2].forEach((key) => {
-        if (this.files[key]) {
-          this.files[key].contour = parsedValue;
+        if (this.fileTypes[key]) {
+          this.fileTypes[key].contour = parsedValue;
         }
       });
     } else {
@@ -167,7 +177,7 @@ export class OneDepComponent implements OnInit {
     const normalizedInput = input.replace(',', '.');
     const parsedValue = parseFloat(normalizedInput);
     if (!isNaN(parsedValue)) {
-      this.files[controlName].contour = parsedValue;
+      this.fileTypes[controlName].contour = parsedValue;
     } else {
       console.warn('Invalid number format:', input);
     }
@@ -175,42 +185,20 @@ export class OneDepComponent implements OnInit {
   updateDetails(event: Event, controlName: EmFile) {
     const textarea = event.target as HTMLTextAreaElement; // Cast to HTMLTextAreaElement
     const value = textarea.value;
-    if (this.files[controlName]) {
-      this.files[controlName].details = value;
+    if (this.fileTypes[controlName]) {
+      this.fileTypes[controlName].details = value;
     }
-  }
-  onMethodChange(): void {
-    this.files[this.emFile.Image].required = true;
-    this.files[this.emFile.MainMap].required = true;
-    switch (this.form.value['emMethod']){
-      case 'helical':
-      this.files[this.emFile.HalfMap1].required = true;
-      this.files[this.emFile.HalfMap2].required = true;
-        break;
-      case "single-particle":
-        this.files[this.emFile.HalfMap1].required = true;
-        this.files[this.emFile.HalfMap2].required = true;
-        this.files[this.emFile.MaskMap].required = true;
-        break;
-    }
-  }
-  onPDB(event: any): void {
-    const input = event.value;  
-    if (input === 'true') {
-      this.files[this.emFile.Coordinates].required = true;
-    } 
   }
  
   isFormValid(): boolean {
     // Ensure all required files in EmFiles have been selected
-    return Object.keys(EmFiles).every((fileKey) => {
-        const file = EmFiles[fileKey as EmFile];
-        return !file.required || !!this.files[file.type]?.file;  // If required, ensure it's selected
+    return Object.keys(this.fileTypes).every((fileKey) => {
+        const file = this.fileTypes[fileKey as EmFile];
+        return !file.required || !!this.fileTypes[file.type]?.file;  // If required, ensure it's selected
     });
 }
   isRequired(key: string): boolean {
-    const fileType = this.fileTypes.find(ft => ft.key === key);
-    return this.files[fileType.key].required;
+    return this.fileTypes[key].required;
   }
   onDepositClick() {
     const formDataToSend = new FormData();
@@ -221,10 +209,10 @@ export class OneDepComponent implements OnInit {
     // emdbId: this.form.value.emdbId, 
     var fileMetadata = []
 
-    for (const key in this.files) {
-      if (this.files[key].file) {
-        formDataToSend.append('file', this.files[key].file);
-        fileMetadata.push({ name: this.files[key].name, type: this.files[key].type, contour: this.files[key].contour, details: this.files[key].details });
+    for (const key in this.fileTypes) {
+      if (this.fileTypes[key].file) {
+        formDataToSend.append('file', this.fileTypes[key].file);
+        fileMetadata.push({ name: this.fileTypes[key].name, type: this.fileTypes[key].type, contour: this.fileTypes[key].contour, details: this.fileTypes[key].details });
       }
     }
     formDataToSend.append('fileMetadata', JSON.stringify(fileMetadata));
