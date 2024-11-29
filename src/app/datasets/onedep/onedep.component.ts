@@ -110,21 +110,9 @@ export class OneDepComponent implements OnInit {
   }
 
   onMethodChange(): void {
-
     this.fileTypes = this.methodsList.find(mL => mL.value=== this.form.value['emMethod']).files;
-    const sortedDepositionSet = Object.entries(this.fileTypes)
-    .sort(([keyA, valueA], [keyB, valueB]) => {
-        // Sort by the 'required' field (true first)
-        return (valueB.required ? 1 : 0) - (valueA.required ? 1 : 0);
-    })
-    .reduce((sortedObj, [key, value]) => {
-        sortedObj[key as EmFile] = value;
-        return sortedObj;
-    }, {} as { [f in EmFile]: DepositionFiles });
-    this.fileTypes = sortedDepositionSet;
-
-    this.fileTypes[this.emFile.Image].required = true;
     this.fileTypes[this.emFile.MainMap].required = true;
+    this.fileTypes[this.emFile.Image].required = true;
     switch (this.form.value['emMethod']){
       case 'helical':
       this.fileTypes[this.emFile.HalfMap1].required = true;
@@ -136,6 +124,19 @@ export class OneDepComponent implements OnInit {
         this.fileTypes[this.emFile.MaskMap].required = true;
         break;
     }
+    const sortedDepositionSet = Object.entries(this.fileTypes)
+        .sort(([keyA, valueA], [keyB, valueB]) => {
+            if (valueA.required && !valueB.required) return -1; // valueA comes first
+            if (!valueA.required && valueB.required) return 1;  // valueB comes first
+            return 0; 
+        })
+        .reduce((sortedObj, [key, value]) => {
+            sortedObj[key as EmFile] = value;
+            return sortedObj;
+        }, {} as { [f in EmFile]: DepositionFiles });
+
+    this.fileTypes = sortedDepositionSet;
+
   }
   onPDB(event: any): void {
     const input = event.value;  

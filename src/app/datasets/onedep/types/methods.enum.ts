@@ -59,6 +59,14 @@ export interface DepositionFiles {
 }
 
 const BasicDepositionSet: { [f in BasicDeposition]: DepositionFiles } = {
+    [EmFile.Image]: {
+        nameFE: 'Public Image',
+        type: "img-emdb",
+        fileName: "",
+        file: null,
+        details: "",
+        required: false,
+    },
     // add metadata later
     [EmFile.MainMap]: {
         nameFE: 'Main Map',
@@ -84,14 +92,6 @@ const BasicDepositionSet: { [f in BasicDeposition]: DepositionFiles } = {
         fileName: "",
         file: null,
         contour: 0.0,
-        details: "",
-        required: false,
-    },
-    [EmFile.Image]: {
-        nameFE: 'Public Image',
-        type: "img-emdb",
-        fileName: "",
-        file: null,
         details: "",
         required: false,
     },
