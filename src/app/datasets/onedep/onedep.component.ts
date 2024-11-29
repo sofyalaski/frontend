@@ -110,7 +110,19 @@ export class OneDepComponent implements OnInit {
   }
 
   onMethodChange(): void {
-    this.fileTypes = this.methodsList[this.form.value['emMethod']].files;
+
+    this.fileTypes = this.methodsList.find(mL => mL.value=== this.form.value['emMethod']).files;
+    const sortedDepositionSet = Object.entries(this.fileTypes)
+    .sort(([keyA, valueA], [keyB, valueB]) => {
+        // Sort by the 'required' field (true first)
+        return (valueB.required ? 1 : 0) - (valueA.required ? 1 : 0);
+    })
+    .reduce((sortedObj, [key, value]) => {
+        sortedObj[key as EmFile] = value;
+        return sortedObj;
+    }, {} as { [f in EmFile]: DepositionFiles });
+    this.fileTypes = sortedDepositionSet;
+
     this.fileTypes[this.emFile.Image].required = true;
     this.fileTypes[this.emFile.MainMap].required = true;
     switch (this.form.value['emMethod']){
@@ -147,10 +159,15 @@ export class OneDepComponent implements OnInit {
     // Update overflow property based on height
     this.detailsOverflow = textarea.scrollHeight > newHeight ? 'auto' : 'hidden';
   }
+
+  get fileTypesEntries() {
+    return Object.entries(this.fileTypes || {}).map(([key, value]) => ({ key, value }));
+  }
+
   onChooseFile(fileInput: HTMLInputElement): void {
     fileInput.click();
   }
-  onFileSelected(event: Event, controlName: EmFile) {
+  onFileSelected(event: Event, controlName: string) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile[controlName] = input.files[0];
@@ -172,7 +189,7 @@ export class OneDepComponent implements OnInit {
       console.warn('Invalid number format:', input);
     }
   }
-  updateContourLevel(event: Event, controlName: EmFile) {
+  updateContourLevel(event: Event, controlName: string) {
     const input = (event.target as HTMLInputElement).value.trim();
     const normalizedInput = input.replace(',', '.');
     const parsedValue = parseFloat(normalizedInput);
@@ -182,7 +199,7 @@ export class OneDepComponent implements OnInit {
       console.warn('Invalid number format:', input);
     }
   }
-  updateDetails(event: Event, controlName: EmFile) {
+  updateDetails(event: Event, controlName: string) {
     const textarea = event.target as HTMLTextAreaElement; // Cast to HTMLTextAreaElement
     const value = textarea.value;
     if (this.fileTypes[controlName]) {

@@ -50,7 +50,6 @@ interface EmMethod {
 
 export interface DepositionFiles {
     nameFE: string;
-    // emFile: EmFile;
     type: string,
     fileName: string,
     file: File,

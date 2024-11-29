@@ -245,7 +245,7 @@
             
            
             <!-- Attachments -->
-            <mat-card>
+            <mat-card *ngIf="form.get('emMethod')?.value">
                 <mat-card-header class="file-header">
                     <div mat-card-avatar class="section-icon">
                         <mat-icon> attachment </mat-icon>
@@ -253,11 +253,11 @@
                     Choose files for deposition
                 </mat-card-header>
                 <mat-card-content>
-                    <mat-card *ngFor="let fileType of fileTypes" class="fileCard">
-                        <ng-container *ngIf="fileType.key !== 'co-cif' || form.get('deposingCoordinates').value === 'true'">
+                    <mat-card *ngFor="let entry of fileTypesEntries" class="fileCard">
+                        <ng-container *ngIf="entry.value.type !== 'co-cif' || form.get('deposingCoordinates').value === 'true'">
                             <mat-card-header>                                
                                 <mat-card-title>
-                                    {{ fileType.header }} <span class="required-asterisk" *ngIf="isRequired(fileType.key)"> *</span>
+                                    {{ entry.value.nameFE }} <span class="required-asterisk" *ngIf="isRequired(entry.key)"> *</span>
                                 </mat-card-title>
                             </mat-card-header>
                             <mat-card-content>
@@ -265,33 +265,33 @@
                                     <button class="fileChooser" mat-raised-button color="primary" (click)="onChooseFile(fileInput)">
                                         Choose File
                                     </button>
-                                    <div *ngIf="selectedFile[fileType.key]">
+                                    <div *ngIf="selectedFile[entry.key]">
                                         <mat-icon>attach_file</mat-icon>
                                     </div>
-                                    <input type="file" #fileInput (change)="onFileSelected($event, fileType.key)" style="display: none;" />
-                                    <div *ngIf="!selectedFile[fileType.key] && formSubmitted" class="error">
-                                        File is required for {{ fileType.header }}.
+                                    <input type="file" #fileInput (change)="onFileSelected($event, entry.key)" style="display: none;" />
+                                    <div *ngIf="!selectedFile[entry.key] && formSubmitted" class="error">
+                                        File is required for {{ entry.value.nameFE }}.
                                     </div>
-                                    <div *ngIf="selectedFile[fileType.key]" class="fileName">
-                                        <p>Selected File: {{ selectedFile[fileType.key].name }}</p>
+                                    <div *ngIf="selectedFile[entry.key]" class="fileName">
+                                        <p>Selected File: {{ selectedFile[entry.key].name }}</p>
                                     </div>
                                 </div>
                     
                                 <div class="input-container">
-                                    <ng-container *ngIf="files[fileType.key]?.contour !== undefined">
+                                    <ng-container *ngIf="fileTypes[entry.key]?.contour !== undefined">
                                         <mat-form-field appearance="outline" class="contour-level">
                                             <mat-label>Contour Level</mat-label>
                                             <input 
                                                 matInput type="number" 
                                                 placeholder="e.g. 0.0"
                                                 required
-                                                [value]="files[fileType.key]?.contour || ''"
-                                                (input)="fileType.key === 'vo-map' ? updateContourLevelMain($event) : updateContourLevel($event, fileType.key)" />
+                                                [value]="fileTypes[entry.key]?.contour || ''"
+                                                (input)="fileTypes[entry.key].type === 'vo-map' ? updateContourLevelMain($event) : updateContourLevel($event, entry.key)" />
                                         </mat-form-field>
                                     </ng-container>
                                     <mat-form-field class="details">
                                         <mat-label>Details</mat-label>
-                                        <textarea matInput placeholder="Enter details..." rows="1" (input)="updateDetails($event, fileType.key)"
+                                        <textarea matInput placeholder="Enter details..." rows="1" (input)="updateDetails($event, entry.key)"
                                                   (input)="autoGrow($event)" [style.overflow]="detailsOverflow"></textarea>
                                     </mat-form-field>
                                 </div>
