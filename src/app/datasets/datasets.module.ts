@@ -92,6 +92,7 @@ import { userReducer } from "state-management/reducers/user.reducer";
 import { AttachmentService } from "shared/services/attachment.service";
 import { OneDepComponent } from "./onedep/onedep.component";
 import { OrcidFormatterDirective } from "./onedep/onedep.directive";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({
   imports: [
@@ -124,6 +125,7 @@ import { OrcidFormatterDirective } from "./onedep/onedep.directive";
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
+    MatSnackBarModule,
     MatTooltipModule,
     NgxJsonViewerModule,
     ReactiveFormsModule,
