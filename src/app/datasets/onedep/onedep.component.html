@@ -137,7 +137,7 @@
                         <!-- Question 1: Electron Microscopy Method -->
                         <th class="questionnaire">Choose Electron Microscopy
                             Method</th>
-                        <mat-form-field class="method-name">
+                            <mat-form-field class="method-name">
                             <mat-label>experimental method</mat-label>
                             <mat-select 
                                 required
@@ -157,8 +157,8 @@
 
 
                         <!-- Question 2: PDB Deposition -->
-                        <tr>
-                            <th class="questionnaire">Are you deposing
+                        <tr *ngIf="form.value['emMethod'] && form.value['emMethod'] !== 'tomogram'">
+                            <th class="questionnaire" >Are you deposing
                                 coordinates with this
                                 submission? (for PDB)</th>
                             <td>
@@ -181,7 +181,7 @@
                             </td>
                         </tr>
                         <tr
-                            *ngIf="form.get('deposingCoordinates')?.value === 'true'">
+                            *ngIf="form.value['emMethod'] && form.get('deposingCoordinates')?.value === 'true'">
                             <th>Has an associated map been deposited to EMDB?
                             </th>
                             <td>
@@ -204,7 +204,7 @@
                         </tr>
 
                         <!-- EMDB Identifier Field -->
-                        <tr *ngIf="form.get('associatedMap').value === 'true' && form.get('deposingCoordinates').value === 'true'">
+                        <tr *ngIf=" form.value['emMethod'] && form.get('associatedMap').value === 'true' && form.get('deposingCoordinates').value === 'true'">
                             <th>EMDB Identifier</th>
                             <td>
                                 <mat-form-field class="EMDB-ID">
@@ -218,7 +218,7 @@
                         </tr>
 
                         <!-- Final Question: Composite Map -->
-                        <tr>
+                        <tr *ngIf=" form.value['emMethod']">
                             <th class="questionnaire">Is this a composite map?
                             </th>
                             <td>
@@ -268,15 +268,15 @@
                                     <div *ngIf="selectedFile[entry.key]">
                                         <mat-icon>attach_file</mat-icon>
                                     </div>
-                                    <input type="file" #fileInput (change)="onFileSelected($event, entry.key)" style="display: none;" />
+                                    <input #fileInput type="file" (change)="onFileSelected($event, entry.key)" style="display: none;" />
                                     <div *ngIf="!selectedFile[entry.key] && formSubmitted" class="error">
                                         File is required for {{ entry.value.nameFE }}.
                                     </div>
                                     <div *ngIf="selectedFile[entry.key]" class="fileName">
                                         <p>Selected File: {{ selectedFile[entry.key].name }}</p>
-                                    </div>
+                                    </div>                    
                                 </div>
-                    
+                                 
                                 <div class="input-container">
                                     <ng-container *ngIf="fileTypes[entry.key]?.contour !== undefined">
                                         <mat-form-field appearance="outline" class="contour-level">

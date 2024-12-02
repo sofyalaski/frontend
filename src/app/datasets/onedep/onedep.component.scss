@@ -51,13 +51,21 @@ mat-card {
     height: 20px;
     margin-bottom: 40px;
   }
+
   .remove-field-btn {
     position: absolute;
     top: 50%;
     right: 0;
     transform: translateY(-50%);
+    margin-left: 8px;
+  }
+  .remove-file-btn {
+    position: absolute;
+    right: 0;
+    transform: translateY(-50%);
     margin-left: 8px; 
 }
+
 
   .add-field-btn {
     margin-top: 16px;
@@ -73,7 +81,13 @@ mat-card {
     font-size: 24px;
   }
 
+
   table {
+
+    width: 80%;
+    table-layout: auto;
+
+    /* Allows columns to adjust based on content */
     th {
       .questionnaire {
         min-width: 20rem;
@@ -96,6 +110,7 @@ mat-card {
         }
       }
     }
+
     mat-radio-group {
       display: flex;
       flex-direction: column;
@@ -108,15 +123,16 @@ mat-card {
       /* Optional: Adds spacing between buttons */
     }
 
-    // .error{
-    //   color: red;
-    // }
-    .EMDB-ID {
-      width: 15%;
-    }
-
     .method-name {
       width: 25%;
+      min-width: 10rem;
+      /* Prevent it from shrinking too much */
+    }
+
+    .EMDB-ID {
+      width: 15%;
+      min-width: 8rem;
+      /* Prevent it from shrinking too much */
     }
 
     .file-types {
@@ -219,7 +235,7 @@ mat-card {
       }
     }
   }
-  
+
   .submitDep {
     background-color: #B3D9AC;
     color: black;

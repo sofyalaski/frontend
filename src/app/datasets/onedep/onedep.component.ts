@@ -20,6 +20,7 @@ import {
 import { User } from "shared/sdk";
 import { MethodsList, DepositionFiles, EmFile } from "./types/methods.enum"
 import { Subscription, fromEvent } from "rxjs";
+import { M } from "@angular/cdk/keycodes";
 
 
 @Component({
@@ -111,6 +112,7 @@ export class OneDepComponent implements OnInit {
 
   onMethodChange(): void {
     this.fileTypes = this.methodsList.find(mL => mL.value=== this.form.value['emMethod']).files;
+    Object.entries(this.fileTypes).forEach(([_, value]) => value.required = false) //  reset all to false
     this.fileTypes[this.emFile.MainMap].required = true;
     this.fileTypes[this.emFile.Image].required = true;
     switch (this.form.value['emMethod']){
@@ -141,6 +143,7 @@ export class OneDepComponent implements OnInit {
   onPDB(event: any): void {
     const input = event.value;  
     if (input === 'true') {
+      console.log(this.fileTypes, this.emFile.Coordinates);
       this.fileTypes[this.emFile.Coordinates].required = true;
     } 
   }
@@ -167,14 +170,33 @@ export class OneDepComponent implements OnInit {
 
   onChooseFile(fileInput: HTMLInputElement): void {
     fileInput.click();
+    console.log(fileInput)
   }
   onFileSelected(event: Event, controlName: string) {
     const input = event.target as HTMLInputElement;
+    // Check if files are selected
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.selectedFile[controlName] = file;
+
+      // Check if control exists in fileTypes before updating
+      if (this.fileTypes[controlName]) {
+          this.fileTypes[controlName].file = file;
+          this.fileTypes[controlName].fileName = file.name;
+      } else {
+          console.error(`No fileType found for key: ${controlName}`);
+      }
+  }
     if (input.files && input.files.length > 0) {
       this.selectedFile[controlName] = input.files[0];
       this.fileTypes[controlName].file = this.selectedFile[controlName];
       this.fileTypes[controlName].fileName = this.selectedFile[controlName].name;
     }
+  }
+  removeFile(controlName: string)  {
+    this.selectedFile = {};
+    this.fileTypes[controlName].file = null;
+    this.fileTypes[controlName].fileName = "";
   }
   updateContourLevelMain(event: Event) {
     const input = (event.target as HTMLInputElement).value.trim();
