@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  OnDestroy,
-  Inject,
-} from "@angular/core";
-import { Dataset, Proposal, Sample } from "shared/sdk/models";
+import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { ENTER, COMMA, SPACE } from "@angular/cdk/keycodes";
 import { MatChipInputEvent } from "@angular/material/chips";
 
@@ -38,7 +30,6 @@ import {
 } from "state-management/actions/datasets.actions";
 import { Router } from "@angular/router";
 import { selectCurrentProposal } from "state-management/selectors/proposals.selectors";
-import { DerivedDataset, Instrument, RawDataset, User } from "shared/sdk";
 import { MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { EditableComponent } from "app-routing/pending-changes.guard";
 import { AppConfigService } from "app-config.service";
@@ -53,6 +44,13 @@ import {
 } from "@angular/forms";
 import { Message, MessageType } from "state-management/models";
 import { DOCUMENT } from "@angular/common";
+import {
+  Instrument,
+  OutputDatasetObsoleteDto,
+  ProposalClass,
+  ReturnedUserDto,
+  SampleClass,
+} from "@scicatproject/scicat-sdk-ts";
 import { AttachmentService } from "shared/services/attachment.service";
 
 /**
@@ -81,14 +79,14 @@ export class DatasetDetailComponent
 
   appConfig = this.appConfigService.getConfig();
 
-  dataset: Dataset | undefined;
+  dataset: OutputDatasetObsoleteDto | undefined;
   datasetWithout$ = this.store.select(selectCurrentDatasetWithoutFileInfo);
   attachments$ = this.store.select(selectCurrentAttachments);
   loading$ = this.store.select(selectIsLoading);
   instrument: Instrument | undefined;
-  proposal: Proposal | undefined;
-  sample: Sample | undefined;
-  user: User | undefined;
+  proposal: ProposalClass | undefined;
+  sample: SampleClass | undefined;
+  user: ReturnedUserDto | undefined;
   editingAllowed = false;
   editEnabled = false;
   show = false;

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { Job } from "shared/sdk";
+import { JobClass } from "@scicatproject/scicat-sdk-ts";
 import { Subscription } from "rxjs";
 import {
   selectJobs,
@@ -91,12 +91,12 @@ export class JobsDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  formatTableData(jobs: Job[]): JobsTableData[] {
+  formatTableData(jobs: JobClass[]): JobsTableData[] {
     let tableData: JobsTableData[] = [];
     if (jobs) {
       tableData = jobs.map((job) => ({
-        id: job.id,
-        initiator: job.createdBy,
+        id: job._id,
+        initiator: job.emailJobInitiator,
         type: job.type,
         createdAt: this.datePipe.transform(job.createdAt, "yyyy-MM-dd HH:mm"),
         statusMessage: job.statusMessage,
@@ -142,7 +142,7 @@ export class JobsDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  onRowClick(job: Job) {
+  onRowClick(job: JobsTableData) {
     const id = encodeURIComponent(job.id);
     this.router.navigateByUrl("/user/jobs/" + id);
   }
