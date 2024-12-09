@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef, QueryList } from "@angular/core";
 import { AppConfigService } from "app-config.service";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -45,6 +45,7 @@ export class OneDepComponent implements OnInit {
   additionalMaps = 0;
 
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild('inputRef') inputFields!: QueryList<ElementRef>;
 
   constructor(public appConfigService: AppConfigService,
     private store: Store,
@@ -104,6 +105,12 @@ export class OneDepComponent implements OnInit {
       orcidId: ['', [Validators.required, Validators.pattern(/^(\d{4}-){3}\d{4}$/)]],
     });
     this.orcidArray().push(orcidField);
+    
+    setTimeout(() => {
+      const inputElements = this.inputFields.toArray();
+      const lastInput = inputElements[inputElements.length - 1];
+      lastInput.nativeElement.focus();
+    });
   }
   removeOrcidField(index: number) {
     if (this.orcidArray().length > 1) {
@@ -151,7 +158,7 @@ export class OneDepComponent implements OnInit {
   autoGrow(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     const lineHeight = parseInt(getComputedStyle(textarea).lineHeight, 10);
-    const maxLines = 5;
+    const maxLines = 2;
 
     // Reset height to auto to calculate scrollHeight
     textarea.style.height = 'auto';

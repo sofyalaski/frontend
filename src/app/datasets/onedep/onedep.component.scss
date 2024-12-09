@@ -9,7 +9,10 @@ mat-card {
       vertical-align: middle;
     }
   }
-
+  table {
+    table-layout: auto; /* Ensures dynamic adjustment to content */
+    width: 100%; /* Optional for table width */
+  }
   .card-container {
     display: flex;
     justify-content: space-between;
@@ -17,23 +20,6 @@ mat-card {
     gap: 16px;
     padding: 16px;
     margin-bottom: 16px;
-  }
-
-  .card-left {
-    flex: 1;
-    margin-left: 20px;
-    margin-right: 16px;
-  }
-
-  .card-middle {
-    flex: 1;
-    margin-right: 16px;
-  }
-
-  .card-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
   }
 
   .file-header {
@@ -72,6 +58,11 @@ mat-card {
     color: rgba(0, 0, 0, 0.6);
     transition: color 0.3s ease;
   }
+  .method-name {
+    width: 40%; 
+    min-width: 20rem;
+  }
+
 
   button[mat-icon-button]:hover {
       background-color: rgba(56, 178, 73, 0.1); /* Subtle background highlight on hover */
@@ -83,19 +74,31 @@ mat-card {
   .add-field-btn mat-icon {
     font-size: 24px;
   }
-
-
+  .admin{
+    width:40rem ;
+    min-width: 30rem;
+  }
+  .questionnaire {
+    width:40rem ;
+    min-width: 30rem;
+  }
+  tr{
+    vertical-align: middle; 
+  }
   th {
-    .questionnaire {
-      min-width: 20rem;
-    }
-
     min-width: 10rem;
     padding-right: 0.5rem;
     text-align: left;
   }
 
   td {
+    .admin{
+      width:80%;
+    }
+    .method-name {
+      width: 50%;
+    }
+    vertical-align: top; 
     width: 100%;
     padding: 0.5rem 0;
 
@@ -110,8 +113,7 @@ mat-card {
 
   mat-radio-group {
     display: flex;
-    flex-direction: column;
-    gap: 0;
+    gap: 1rem;
   }
 
   mat-radio-button {
@@ -125,9 +127,7 @@ mat-card {
     width: 50%;
   }
 
-  .method-name {
-    width: 50%;
-  }
+  
 
   .file-types {
     width: 10%;

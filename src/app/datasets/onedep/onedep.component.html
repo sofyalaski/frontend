@@ -60,62 +60,67 @@
                         <span>Administrative</span>
                     </mat-card-header>
 
-                    <div class="card-container">
-                        <!-- Left Section -->
-                        <div class="card-left">
-                            <h2>Obtain OneDep Token</h2>
-                            <p class="instruction">Add instruction how to get it
-                            </p>
-                            <mat-form-field class="token-field"
-                                appearance="outline">
+                    <!-- OneDep Authorization -->
+                    <table>
+                        <tr>
+                            <th class="admin" >
+                              <h2>Obtain OneDep Token</h2>
+                              <p class="instruction">Add instruction how to get it</p>
+                            </th>
+                        
+                            <!-- Right side: Token input field -->
+                            <td class="admin" >
+                              <mat-form-field class="token-field" appearance="outline" >
                                 <mat-label>Token</mat-label>
-                                <textarea matInput required
-                                    placeholder="copy the token here" rows="1"
-                                    formControlName="jwtToken"
-                                    (input)="autoGrow($event)"
-                                    [style.overflow]="detailsOverflow"></textarea>
-                            </mat-form-field>
-                        </div>
+                                <textarea matInput required placeholder="Copy the token here" rows="1"
+                                          formControlName="jwtToken" (input)="autoGrow($event)"
+                                          [style.overflow]="detailsOverflow"></textarea>
+                              </mat-form-field>
+                            </td>
+                        </tr>
 
-                        <!-- Right Section -->
-                        <div class="card-right">
-                            <h2>Enter 16-digit ORCID iD</h2>
+                        <tr>
+                            <th class="admin">
+                                <h2>Enter 16-digit ORCID iD</h2>
                             <p class="instruction">Owners of these ORCIDs iDs
                                 are
                                 allowed to access this deposition.</p>
-
-                            <!-- Link the orcid FormArray -->
-                            <div formArrayName="orcid">
+                            </th>
+                        
+                            <!-- Right side: Token input field -->
+                            <td >
                                 <ng-container
-                                    *ngFor="let field of orcidArray().controls; let i = index">
-                                    <div [formGroupName]="i">
-                                        <mat-form-field class="data-field"
-                                            appearance="outline">
-                                            <mat-label>Enter 16-digits ORCID
-                                                iD</mat-label>
-                                            <div class="input-container">
-                                                <input matInput type="text"
-                                                    maxlength="19"
-                                                    placeholder="xxxx-xxxx-xxxx-xxxx"
-                                                    formControlName="orcidId"
-                                                    orcidFormatter>
-                                                <button mat-icon-button
-                                                    class="remove-field-btn"
-                                                    (click)="removeOrcidField(i)">
-                                                    <mat-icon>clear</mat-icon>
-                                                </button>
-                                            </div>
-                                        </mat-form-field>
-                                    </div>
-                                </ng-container>
-                            </div>
+                                *ngFor="let field of orcidArray().controls; let i = index">
+                                <div [formGroupName]="i">
+                                    <mat-form-field class="data-field"
+                                        appearance="outline">
+                                        <mat-label>Enter 16-digits ORCID
+                                            iD</mat-label>
+                                        <div class="input-container">
+                                            <input 
+                                                matInput 
+                                                type="text"
+                                                #inputRef
+                                                maxlength="19"
+                                                placeholder="xxxx-xxxx-xxxx-xxxx"
+                                                formControlName="orcidId"
+                                                orcidFormatter>
+                                            <button mat-icon-button
+                                                class="remove-field-btn"
+                                                (click)="removeOrcidField(i)">
+                                                <mat-icon>clear</mat-icon>
+                                            </button>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
                             <button mat-icon-button class="add-field-btn"
                                 (click)="addOrcidField()">
                                 <mat-icon>add</mat-icon>
                             </button>
-
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
+                    </table> 
                 </form>
             </mat-card>
 
@@ -132,8 +137,10 @@
                     <table>
                         <!-- Question 1: Electron Microscopy Method -->
                         <th class="questionnaire">Choose Electron Microscopy
-                            Method</th>
-                        <mat-form-field class="method-name">
+                            Method
+                        </th>
+                        <td>
+                        <mat-form-field class="method-name" appearance="outline">
                             <mat-label>experimental method</mat-label>
                             <mat-select required formControlName="emMethod"
                                 name="method"
@@ -149,7 +156,7 @@
                                 You must specify the experimental method
                             </div>
                         </mat-form-field>
-
+                        </td>
 
                         <!-- Question 2: PDB Deposition -->
                         <tr
