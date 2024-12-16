@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy, Inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  Inject,
+} from "@angular/core";
 import { Dataset, Proposal, Sample } from "shared/sdk/models";
 import { ENTER, COMMA, SPACE } from "@angular/cdk/keycodes";
 import { MatChipInputEvent } from "@angular/material/chips";
@@ -8,7 +15,7 @@ import { SampleEditComponent } from "datasets/sample-edit/sample-edit.component"
 import { DialogComponent } from "shared/modules/dialog/dialog.component";
 import { combineLatest, fromEvent, Observable, Subscription } from "rxjs";
 import { Store } from "@ngrx/store";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from "@angular/common/http";
 
 import { showMessageAction } from "state-management/actions/user.actions";
 import {
@@ -61,7 +68,8 @@ import { AttachmentService } from "shared/services/attachment.service";
   standalone: false,
 })
 export class DatasetDetailComponent
-  implements OnInit, OnDestroy, EditableComponent {
+  implements OnInit, OnDestroy, EditableComponent
+{
   private subscriptions: Subscription[] = [];
   private _hasUnsavedChanges = false;
   form: FormGroup;
@@ -86,16 +94,6 @@ export class DatasetDetailComponent
   editEnabled = false;
   show = false;
 
-
-  connectedDepositionBackend: string = '';
-  connectedDepositionBackendVersion: string = '';
-  connectingToDepositionBackend: boolean = false;
-  lastUsedDepositionBackends: string[] = [];
-  forwardDepositionBackend: string = '';
-  errorMessage: string = '';
-
-  @Output() emClick = new EventEmitter<Dataset>();
-
   readonly separatorKeyCodes: number[] = [ENTER, COMMA, SPACE];
 
   constructor(
@@ -107,11 +105,9 @@ export class DatasetDetailComponent
     private http: HttpClient,
     private router: Router,
     private fb: FormBuilder,
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.connectingToDepositionBackend = true;
-
     this.form = this.fb.group({
       datasetName: new FormControl("", [Validators.required]),
       description: new FormControl("", [Validators.required]),
@@ -377,55 +373,4 @@ export class DatasetDetailComponent
   openAttachment(encoded: string) {
     this.attachmentService.openAttachment(encoded);
   }
-
-  hasOpenEMKeyword(): boolean {
-    const keywordsArray = this.dataset.keywords;
-    return keywordsArray.some((keyword: string) =>
-      keyword.toLowerCase() === 'openem'
-    );
-  }
-
-  onOneDepClick() {
-    const id = encodeURIComponent(this.dataset.pid);
-    this.connectToDepositionBackend();
-    this.router.navigateByUrl("/datasets/" + id + "/onedep");
-  }
-  onEMPIARclick() {
-    const id = encodeURIComponent(this.dataset.pid);
-    this.router.navigateByUrl("/datasets/" + id + "/empiar");
-  }
-
-
-  connectToDepositionBackend(): boolean {
-    var DepositionBackendUrl = "http://localhost:8080"
-    let DepositionBackendUrlCleaned = DepositionBackendUrl.slice();
-    // Check if last symbol is a slash and add version endpoint
-    if (!DepositionBackendUrlCleaned.endsWith('/')) {
-      DepositionBackendUrlCleaned += '/';
-    }
-
-    let DepositionBackendUrlVersion = DepositionBackendUrlCleaned + 'version';
-
-    // Try to connect to the facility backend/version to check if it is available
-    console.log('Connecting to OneDep backend: ' + DepositionBackendUrlVersion);
-    this.http.get(DepositionBackendUrlVersion).subscribe(
-      response => {
-        console.log('Connected to OneDep backend', response);
-        // If the connection is successful, store the connected facility backend URL
-        this.connectedDepositionBackend = DepositionBackendUrlCleaned;
-        this.connectingToDepositionBackend = false;
-        this.connectedDepositionBackendVersion = response['version'];
-      },
-      error => {
-        this.errorMessage += `${new Date().toLocaleString()}: ${error.message}<br>`;
-        console.error('Request failed', error);
-        this.connectedDepositionBackend = '';
-        this.connectingToDepositionBackend = false;
-      }
-    );
-
-    return true;
-  }
-
 }
-
