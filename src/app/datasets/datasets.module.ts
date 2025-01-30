@@ -90,6 +90,11 @@ import { CdkDrag, CdkDragHandle, CdkDropList } from "@angular/cdk/drag-drop";
 import { FiltersModule } from "shared/modules/filters/filters.module";
 import { userReducer } from "state-management/reducers/user.reducer";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { OneDepComponent } from "./onedep/onedep.component";
+import { OrcidFormatterDirective } from "./onedep/onedep.directive";
+import { EmpiarComponent } from "./empiar/empiar.component";
+import { OneDepEffects } from "state-management/effects/onedep.effects";
+
 
 @NgModule({
   imports: [
@@ -137,6 +142,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
       SampleEffects,
       PublishedDataEffects,
       LogbookEffects,
+      OneDepEffects,
     ]),
     StoreModule.forFeature("datasets", datasetsReducer),
     StoreModule.forFeature("instruments", instrumentsReducer),
@@ -179,6 +185,9 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
     DatafilesActionsComponent,
     DatafilesActionComponent,
     DatasetsFilterSettingsComponent,
+    OneDepComponent,
+    OrcidFormatterDirective,
+    EmpiarComponent,
   ],
   providers: [
     ArchivingService,
