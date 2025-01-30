@@ -33,8 +33,13 @@ export interface OneDepUserInfo {
 }
 
 export interface UploadedFile {
-  depID: string;
-  fileID: string;
+  id: number;
+  name: string;
+  type: any;
+  created: string;
+  metadata: any;
+  errors: any;
+  warnings: any;
 }
 
 export interface FileUpload {
